@@ -12,13 +12,18 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
+import com.thiago.barroso.clinica.domain.PerfilTipo;
 import com.thiago.barroso.clinica.service.UsuarioService;
 
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-
+	
+	private static final String ADMIN = PerfilTipo.ADMIN.getDesc();
+	private static final String MEDICO = PerfilTipo.MEDICO.getDesc();
+	private static final String PACIENTE = PerfilTipo.PACIENTE.getDesc();
+	
 	@Autowired
 	private UsuarioService service;
 	
@@ -30,10 +35,13 @@ public class SecurityConfig {
 						.requestMatchers("/webjars/**", "/css/**", "/image/**", "/js/**").permitAll()
 						
 						// Acessos privados admin
-						.requestMatchers("/u/**").hasAuthority("ADMIN")
+						.requestMatchers("/u/**").hasAuthority(ADMIN)
 						
 						// Acessos privados medicos
-						.requestMatchers("/medicos/**").hasAuthority("MEDICOS")
+						.requestMatchers("/medicos/**").hasAuthority(MEDICO)
+						
+						// Acessos privados pacientes
+						.requestMatchers("/pacientes/**").hasAnyAuthority(PACIENTE)
 						
 						.anyRequest().authenticated()
 					
