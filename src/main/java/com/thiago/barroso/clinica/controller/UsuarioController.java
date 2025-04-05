@@ -14,9 +14,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.thiago.barroso.clinica.domain.Medico;
 import com.thiago.barroso.clinica.domain.Perfil;
 import com.thiago.barroso.clinica.domain.PerfilTipo;
 import com.thiago.barroso.clinica.domain.Usuario;
+import com.thiago.barroso.clinica.service.MedicoService;
 import com.thiago.barroso.clinica.service.UsuarioService;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -26,7 +28,10 @@ import jakarta.servlet.http.HttpServletRequest;
 public class UsuarioController {
 	
 	@Autowired
-	UsuarioService service;
+	private UsuarioService service;
+	
+	@Autowired
+	private MedicoService medicoService;
 	
 	//Abrir acadastro de usuários (medico/admin/paciente)
 	@GetMapping("/novo/cadastro/usuario")
@@ -83,7 +88,10 @@ public class UsuarioController {
 				!us.getPerfis().contains(new Perfil(PerfilTipo.MEDICO.getCod()))) {
 			return new ModelAndView("usuario/cadastro", "usuario", us);
 		}else if(us.getPerfis().contains(new Perfil(PerfilTipo.MEDICO.getCod()))) {
-			return new ModelAndView("especialidade/especialidade");
+			Medico medico = medicoService.buscarPorUsuarioId(usuarioId);
+			return medico.hasNotId()
+					? new ModelAndView("medico/cadastro", "medico", new Medico(new Usuario(usuarioId)))
+					: new ModelAndView("medico/cadastro", "medico", medico);
 		}else if(us.getPerfis().contains(new Perfil(PerfilTipo.PACIENTE.getCod()))) {
 			ModelAndView model = new ModelAndView("error");
 			model.addObject("status", 403);
