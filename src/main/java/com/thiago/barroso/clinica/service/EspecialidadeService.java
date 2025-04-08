@@ -1,5 +1,6 @@
 package com.thiago.barroso.clinica.service;
 
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,4 +48,8 @@ public class EspecialidadeService {
 		repository.deleteById(id);
 	}
 	
+	@Transactional(readOnly = true)
+	public List<String> buscarEspecialidadesByTermos(String termo){
+		return repository.findEspecialidadesByTermo(termo);
+	}
 }
