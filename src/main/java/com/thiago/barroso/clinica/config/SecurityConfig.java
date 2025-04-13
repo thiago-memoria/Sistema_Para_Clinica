@@ -47,7 +47,7 @@ public class SecurityConfig {
 						
 						//Acessos privados especialidades
 						.requestMatchers("/especialidades/datatables/server/medico/*").hasAnyAuthority(MEDICO, ADMIN)
-						.requestMatchers("/especialidades/titulo").hasAnyAuthority(MEDICO, ADMIN)
+						.requestMatchers("/especialidades/titulo").hasAnyAuthority(MEDICO, ADMIN, PACIENTE)
 						.requestMatchers("/especialidades/**").hasAnyAuthority(ADMIN)
 
 						
