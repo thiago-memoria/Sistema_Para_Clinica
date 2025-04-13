@@ -1,6 +1,6 @@
 package com.thiago.barroso.clinica.service;
 
-import java.util.Optional;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -47,4 +47,8 @@ public class MedicoService {
 		medico.getEspecialidades().removeIf(e -> e.getId().equals(idEsp));
 	}
 	
+	@Transactional(readOnly = false)
+	public List<Medico> buscarMedicosPorEspecialidades(String titulo) {
+		return repository.findByMedicosPorEspecialidade(titulo);
+	}
 }
