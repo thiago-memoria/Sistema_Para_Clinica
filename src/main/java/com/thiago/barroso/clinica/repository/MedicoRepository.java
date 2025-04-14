@@ -10,15 +10,15 @@ import com.thiago.barroso.clinica.domain.Medico;
 
 public interface MedicoRepository extends JpaRepository<Medico, Long>{
 	
-	@Query("select m form Medico m where m.usuario.id = :id")
+	@Query("select m from Medico m where m.usuario.id = :id")
 	Optional<Medico> findByUsuarioId(Long id);
 	
 	@Query("select m from Medico m where m.usuario.email like :email")
 	Optional<Medico> findByUsuarioEmail(String email);
 	
 	@Query("select distinct m from Medico m "
-			+ "join m.especialidade e "
-			+ "where e.titulo like :titulo"
+			+ "join m.especialidades e "
+			+ "where e.titulo like :titulo "
 			+ "and m.usuario.ativo = true")
 	List<Medico> findByMedicosPorEspecialidade(String titulo);
 }

@@ -39,7 +39,7 @@ public class MedicoController {
 	
 	// salvar médico
 	@PostMapping({"/salvar"})
-	public String slvar(Medico medico, RedirectAttributes attr, @AuthenticationPrincipal User user) {
+	public String salvar(Medico medico, RedirectAttributes attr, @AuthenticationPrincipal User user) {
 		if(medico.hasNotId() && medico.getUsuario().hasNotId()) {
 			Usuario usuario = usuarioService.buscarPorEmail(user.getUsername());
 			medico.setUsuario(usuario);

@@ -15,13 +15,13 @@ public interface EspecialidadeRepository extends JpaRepository<Especialidade, Lo
 	@Query("select e from Especialidade e where e.titulo like :search%")
 	Page<Especialidade> findAllByTitulo(String search, Pageable pageable);
 	
-	@Query("select e.titulo from Especialidade e where e.titulo like :%titulo")
+	@Query("select e.titulo from Especialidade e where e.titulo like concat('%', :titulo, '%')")
 	List<String> findEspecialidadesByTermo(String termo);
 	
 	@Query("select e from Especialidade e where e.titulo IN :titulos")
 	Set<Especialidade> findByTitulos(String[] titulos);
 	
-	@Query("select e from Epecialidade e "
+	@Query("select e from Especialidade e "
 			+"join e.medicos m "
 			+"where m.id = :id")
 	Page<Especialidade> findByIdMedico(Long id, Pageable pageable);
