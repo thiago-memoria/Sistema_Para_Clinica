@@ -11,6 +11,8 @@ import com.thiago.barroso.clinica.domain.Agendamento;
 import com.thiago.barroso.clinica.domain.Horario;
 import com.thiago.barroso.clinica.repository.AgendamentoRepository;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 @Service
 public class AgendamentoService {
 	
@@ -27,4 +29,18 @@ public class AgendamentoService {
 	public void salvar(Agendamento agendamento) {
 		repository.save(agendamento);
 	}
+
+	@Transactional(readOnly = true)
+	public Object buscarHistoricoPorPacienteEmail(String username, HttpServletRequest request) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Transactional(readOnly = true)
+	public Object buscarHistoricoPorMedicoEmail(String username, HttpServletRequest request) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	 
 }
