@@ -77,7 +77,6 @@ public class AgendamentoController {
 		if(user.getAuthorities().contains(new SimpleGrantedAuthority(PerfilTipo.PACIENTE.getDesc()))) {
 			
 			return  ResponseEntity.ok(service.buscarHistoricoPorPacienteEmail(user.getUsername(), request));
-			
 		}
 		
 		if(user.getAuthorities().contains(new SimpleGrantedAuthority(PerfilTipo.MEDICO.getDesc()))) {
