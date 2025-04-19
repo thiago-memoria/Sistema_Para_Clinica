@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.thiago.barroso.clinica.datatables.Datatables;
 import com.thiago.barroso.clinica.datatables.DatatablesColunas;
 import com.thiago.barroso.clinica.domain.Perfil;
+import com.thiago.barroso.clinica.domain.PerfilTipo;
 import com.thiago.barroso.clinica.domain.Usuario;
 import com.thiago.barroso.clinica.repository.UsuarioRepository;
 
@@ -88,6 +89,14 @@ public class UsuarioService implements UserDetailsService{
 	@Transactional(readOnly = false)
 	public void alterarSenha(Usuario usuario, String senha) {
 		usuario.setSenha(new BCryptPasswordEncoder().encode(senha));
+		repository.save(usuario);
+	}
+	
+	@Transactional(readOnly = false)
+	public void salvarCadastroPaciente(Usuario usuario) {
+		String crypt = new BCryptPasswordEncoder().encode(usuario.getSenha());
+		usuario.setSenha(crypt);
+		usuario.addPerfil(PerfilTipo.PACIENTE);
 		repository.save(usuario);
 	}
 }
