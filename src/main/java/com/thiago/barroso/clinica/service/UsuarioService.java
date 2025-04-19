@@ -2,6 +2,7 @@ package com.thiago.barroso.clinica.service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -38,8 +39,9 @@ public class UsuarioService implements UserDetailsService{
 	
 	@Transactional(readOnly = true)
 	@Override
-	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		Usuario usuario = buscarPorEmail(username);
+	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+		Usuario usuario = buscarPorEmailEAtivo(email)
+				.orElseThrow(() -> new UsernameNotFoundException("Usuario" + email + " "));
 		return new User(
 			usuario.getEmail(),
 			usuario.getSenha(),
@@ -98,5 +100,10 @@ public class UsuarioService implements UserDetailsService{
 		usuario.setSenha(crypt);
 		usuario.addPerfil(PerfilTipo.PACIENTE);
 		repository.save(usuario);
+	}
+	
+	@Transactional(readOnly = true)
+	public Optional<Usuario> buscarPorEmailEAtivo(String email){
+		return repository.findByEmailAndAtivo(email);
 	}
 }

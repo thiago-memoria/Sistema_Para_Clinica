@@ -1,5 +1,7 @@
 package com.thiago.barroso.clinica.repository;
 
+import java.util.Optional;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -22,5 +24,8 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long>{
 			+ "join u.perfis p "
 			+"where u.id = :usuarioId AND p.id IN :perfisId")
 	Usuario findByIdAndPerfis(Long usuarioId, Long[] perfisId);
+	
+	@Query("select u from Usuario u where u.email like :email AND u.ativo = true")
+	Optional<Usuario> findByEmailAndAtivo(String email);
 	
 }
