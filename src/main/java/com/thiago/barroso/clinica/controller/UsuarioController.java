@@ -25,6 +25,7 @@ import com.thiago.barroso.clinica.domain.Usuario;
 import com.thiago.barroso.clinica.service.MedicoService;
 import com.thiago.barroso.clinica.service.UsuarioService;
 
+import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;
 
 @Controller
@@ -148,7 +149,7 @@ public class UsuarioController {
 	
 	// recebe o form da página cadastrar-se
 	@PostMapping("/cadastro/paciente/salvar")
-	public String salvarCadastroPaciente(Usuario usuario, BindingResult result) {
+	public String salvarCadastroPaciente(Usuario usuario, BindingResult result) throws MessagingException {
 		try {
 			service.salvarCadastroPaciente(usuario);
 		}catch(DataIntegrityViolationException ex) {

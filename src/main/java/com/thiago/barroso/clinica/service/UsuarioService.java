@@ -1,5 +1,6 @@
 package com.thiago.barroso.clinica.service;
 
+import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -21,7 +22,9 @@ import com.thiago.barroso.clinica.domain.Perfil;
 import com.thiago.barroso.clinica.domain.PerfilTipo;
 import com.thiago.barroso.clinica.domain.Usuario;
 import com.thiago.barroso.clinica.repository.UsuarioRepository;
+import com.thiago.barroso.clinica.security.exception.AcessoNegadoException;
 
+import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;
 
 @Service
@@ -31,6 +34,8 @@ public class UsuarioService implements UserDetailsService{
 	private UsuarioRepository repository;
 	@Autowired
 	private Datatables datatables;
+	@Autowired
+	private EmailService emailService;
 	
 	@Transactional(readOnly = true)
 	public Usuario buscarPorEmail(String email) {
@@ -95,15 +100,34 @@ public class UsuarioService implements UserDetailsService{
 	}
 	
 	@Transactional(readOnly = false)
-	public void salvarCadastroPaciente(Usuario usuario) {
+	public void salvarCadastroPaciente(Usuario usuario) throws MessagingException {
 		String crypt = new BCryptPasswordEncoder().encode(usuario.getSenha());
 		usuario.setSenha(crypt);
 		usuario.addPerfil(PerfilTipo.PACIENTE);
 		repository.save(usuario);
+		
+		emailDeConfirmacaoDeCadastro(usuario.getEmail());
 	}
 	
 	@Transactional(readOnly = true)
 	public Optional<Usuario> buscarPorEmailEAtivo(String email){
 		return repository.findByEmailAndAtivo(email);
+	}
+	
+	public void emailDeConfirmacaoDeCadastro(String email) throws MessagingException {
+		String codigo = Base64.getEncoder().encodeToString(email.getBytes());
+		emailService.enviarPedidoDeConfirmacaoDeCadastro(email, codigo);
+	}
+	
+	@Transactional(readOnly = true)
+	public void ativarCadastroPaciente(String codigo) {
+		String email = new String(Base64.getDecoder().decode(codigo));
+		Usuario usuario = buscarPorEmail(email);
+		
+		if(usuario.hasNotId()) {
+			throw new AcessoNegadoException("Não foi possível ativar seu cadastro. Entre em "
+					+"contato com o suporte.");
+		}
+		usuario.setAtivo(true);
 	}
 }
