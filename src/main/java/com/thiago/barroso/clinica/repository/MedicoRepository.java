@@ -24,7 +24,7 @@ public interface MedicoRepository extends JpaRepository<Medico, Long>{
 	
 	@Query("select m.id "
 			+ "from Medico m "
-			+ "join m.especialidade e "
+			+ "join m.especialidades e "
 			+ "join m.agendamentos a "
 			+ "where "
 			+ "a.especialidade.id = :idEsp AND a.medico.id = :idMed")
