@@ -68,6 +68,7 @@ public class SecurityConfig {
 		            )
 		        .logout(logout -> logout
 		        		.logoutSuccessUrl("/")
+		        		.deleteCookies("JSESSIONDID")
 		            )
 		        .exceptionHandling(exception -> exception
 		        		.accessDeniedPage("/acesso-negado")
