@@ -1,22 +1,24 @@
 package com.thiago.barroso.clinica.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.servlet.ServletListenerRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.core.session.SessionRegistry;
+import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.session.HttpSessionEventPublisher;
 
 import com.thiago.barroso.clinica.domain.PerfilTipo;
 import com.thiago.barroso.clinica.service.UsuarioService;
 
-@EnableGlobalMethodSecurity(prePostEnabled = true)
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
@@ -36,6 +38,7 @@ public class SecurityConfig {
 						.requestMatchers("/webjars/**", "/css/**", "/image/**", "/js/**").permitAll()
 						.requestMatchers("/u/novo/cadastro", "/u/cadastro/realizado", "/u/cadastro/paciente/salvar").permitAll()
 						.requestMatchers("/u/confirmacao/cadastro").permitAll()
+						.requestMatchers("/u/p/**").permitAll()
 						
 						// Acessos privados admin
 						.requestMatchers("/u/editar/senha", "/u/confirmar/senha").hasAnyAuthority(PACIENTE, MEDICO)
@@ -69,8 +72,16 @@ public class SecurityConfig {
 		        .exceptionHandling(exception -> exception
 		        		.accessDeniedPage("/acesso-negado")
                     )
+		        .rememberMe(remember -> remember
+		                .key("keyRemember")
+		                .tokenValiditySeconds(1209600)
+		            )
+		        .sessionManagement(session -> session
+		        		.maximumSessions(1)
+		    			.maxSessionsPreventsLogin(true)
+		    			.sessionRegistry(sessionRegistry())
+		        		)
 		        .build();
-				
 	}
 	
 	@Bean
@@ -89,5 +100,14 @@ public class SecurityConfig {
 	    public PasswordEncoder passwordEncoder() {
 	        return new BCryptPasswordEncoder();
 	    }
-
+	    
+	    @Bean
+	    public SessionRegistry sessionRegistry() {
+	    	return new SessionRegistryImpl();
+	    }
+	    
+	    @Bean
+	    public ServletListenerRegistrationBean<?> servletListenerRegistrationBean(){
+	    	return new ServletListenerRegistrationBean<>( new HttpSessionEventPublisher());
+	    }
 }

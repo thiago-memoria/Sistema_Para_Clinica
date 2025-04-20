@@ -4,6 +4,7 @@ import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -128,5 +129,16 @@ public class UsuarioService implements UserDetailsService{
 					+"contato com o suporte.");
 		}
 		usuario.setAtivo(true);
+	}
+	
+	@Transactional(readOnly = false)
+	public void pedidoRedefinicaoDeSenha(String email) throws MessagingException {
+		Usuario usuario = buscarPorEmailEAtivo(email)
+				.orElseThrow(() -> new UsernameNotFoundException("Usuario" + email + " "));
+	
+		String verificador = UUID.randomUUID().toString().replaceAll("-", "").substring(0, 6);
+		
+		usuario.setCodigoVerificador(verificador);
+		emailService.enviarPedidoRedefinicaoSenha(email, verificador);
 	}
 }
